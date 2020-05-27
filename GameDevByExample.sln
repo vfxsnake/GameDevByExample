@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SFML_Template", "SFML_Template.vcxproj", "{369F1C37-E511-4E64-A3C2-40E85CA9E3AB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameDevByExample", "GameDevByExample.vcxproj", "{369F1C37-E511-4E64-A3C2-40E85CA9E3AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +26,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1AA8B11C-456A-4B78-A654-3A9E421E7243}
+		SolutionGuid = {97F85349-CB9B-4807-BB0E-0C0B110A2E5B}
 	EndGlobalSection
 EndGlobal
