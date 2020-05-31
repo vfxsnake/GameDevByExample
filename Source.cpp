@@ -6,51 +6,45 @@ sf::VideoMode ViewMode(ViewSize.x, ViewSize.y);
 sf::RenderWindow Window(ViewMode, "Hello SFML Game!!", sf::Style::Default);
 
 // Global declaration of sprite and Texture classes
+// sky layer
 sf::Texture SkyTexture;
 sf::Sprite SkySprite;
+// background layer
+sf::Texture BgTexture;
+sf::Sprite BgSprite;
+
+//Hero Layer
+sf::Texture HeroTexture;
+sf::Sprite HeroSprite;
 
 // Function to initialze textures and Sprites
-void init()
+void Init()
 {
 	SkyTexture.loadFromFile("Assets/graphics/sky.png"); // loads the texture
 	SkySprite.setTexture(SkyTexture);
+
+	BgTexture.loadFromFile("Assets/graphics/bg.png");
+	BgSprite.setTexture(BgTexture);
+
+	HeroTexture.loadFromFile("Assets/graphics/hero.png");
+	HeroSprite.setTexture(HeroTexture);
+	HeroSprite.setPosition(sf::Vector2f(ViewSize.x/2, ViewSize.y/2));
+	// the size parameter comes from the texture size
+	HeroSprite.setOrigin(HeroTexture.getSize().x/2, HeroTexture.getSize().y/2);
 }
 
-void draw()
+void Draw()
 {
 	Window.draw(SkySprite);
+	Window.draw(BgSprite);
+	Window.draw(HeroSprite);
 }
 
 int main()
 {
 	// Initialize Game Objects:
-	// test rectangle:
-	sf::RectangleShape Rectangle(sf::Vector2f(500.0f, 300.0f));
-	
-	// chapter 3 p.104 Circle, triangle creation:
-	sf::CircleShape Circle(100); //creates a circle with 100 pixel radius
-	Circle.setFillColor(sf::Color::Green);
-	float CircleRadius = Circle.getRadius();
-	Circle.setOrigin(sf::Vector2f(CircleRadius, CircleRadius));
-	Circle.setPosition(ViewSize.x / 2, ViewSize.y / 2);
+	Init();
 
-	sf::ConvexShape Triangle; // creates convex figures in this case a triagle
-	Triangle.setPointCount(3);
-	Triangle.setPoint(0, sf::Vector2f(-100, 0));
-	Triangle.setPoint(1, sf::Vector2f(0, -100));
-	Triangle.setPoint(2, sf::Vector2f(100,0));
-	Triangle.setFillColor(sf::Color(128, 0, 128, 255));
-	Triangle.setPosition(ViewSize.x / 2, ViewSize.y / 2);
-	//Triangle.setOrigin(sf::Vector2f(50, -50));
-
-	Rectangle.setFillColor(sf::Color::Yellow);
-	Rectangle.setPosition(ViewSize.x/2, ViewSize.y/2); // puts the rectangle in the mittle of the window
-	//Rectangle.setPosition(0, 0); // sets the rectangle in the point 0 0 top Left corner
-	// seting the origin to the center of the rectangle:
-	Rectangle.setOrigin(sf::Vector2f(Rectangle.getSize().x/2, Rectangle.getSize().y/2));
-	// sets the origin to the left corner of the rectangle
-	//Rectangle.setOrigin(sf::Vector2f(0, 0));
-	
 	
 	// Game loop will begin here
 	while (Window.isOpen())
@@ -62,9 +56,7 @@ int main()
 
 		//renderGame Objects
 		//here we call the objects
-		Window.draw(Rectangle);
-		Window.draw(Circle);
-		Window.draw(Triangle);
+		Draw();
 		Window.display();
 	}
 	return 0;
