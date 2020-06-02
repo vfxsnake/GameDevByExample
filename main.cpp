@@ -1,28 +1,17 @@
-/*
 #include "SFML/Graphics.hpp"
+sf::Vector2f ViewSize(1024,768);
+sf::VideoMode Vm(ViewSize.x, ViewSize.y);
+sf::RenderWindow Window(Vm, "Hello SFML  Game!!!", sf::Style::Default);
 
-// windwo size variable
-sf::Vector2f ViewSize(1024, 768);
-sf::VideoMode ViewMode(ViewSize.x, ViewSize.y);
-sf::RenderWindow Window(ViewMode, "Hello SFML Game!!", sf::Style::Default);
+sf::Vector2f PlayerPosition;
+bool PlayerMoving = false;
 
-// Global declaration of sprite and Texture classes
-// sky layer
 sf::Texture SkyTexture;
 sf::Sprite SkySprite;
-// background layer
+
 sf::Texture BgTexture;
 sf::Sprite BgSprite;
 
-//Hero Layer
-sf::Texture HeroTexture;
-sf::Sprite HeroSprite;
-sf::Vector2f PlayerPosition;
-//bool player moving
-bool PlayerMoving = false;
-
-
-// Function to initialze textures and Sprites
 void Init()
 {
 	SkyTexture.loadFromFile("Assets/graphics/sky.png"); // loads the texture
@@ -30,20 +19,6 @@ void Init()
 
 	BgTexture.loadFromFile("Assets/graphics/bg.png");
 	BgSprite.setTexture(BgTexture);
-
-	HeroTexture.loadFromFile("Assets/graphics/hero.png");
-	HeroSprite.setTexture(HeroTexture);
-	HeroSprite.setPosition(sf::Vector2f(ViewSize.x/2, ViewSize.y/2));
-	// the size parameter comes from the texture size
-	HeroSprite.setOrigin(HeroTexture.getSize().x/2, HeroTexture.getSize().y/2);
-
-}
-
-void Draw()
-{
-	Window.draw(SkySprite);
-	Window.draw(BgSprite);
-	Window.draw(HeroSprite);
 }
 
 void UpdateInput()
@@ -78,39 +53,33 @@ void UpdateInput()
 
 void Update(float Dt)
 {
-	if (PlayerMoving)
-	{
-		HeroSprite.move(50.0f * Dt, 0);
-	}
+}
+
+
+void Draw()
+{
+	Window.draw(SkySprite);
+	Window.draw(BgSprite);
 }
 
 int main()
 {
-	//initilize clock
 	sf::Clock Clock;
-
-	// Initialize Game Objects:
+	Window.setFramerateLimit(60);
 	Init();
 
-	// Game loop will begin here
 	while (Window.isOpen())
 	{
-		//Handle Keyboard Events
 		UpdateInput();
 
-		// update game before drawing
 		sf::Time Dt = Clock.restart();
 		Update(Dt.asSeconds());
-
-		//Upadte Game Objects in the sene
+		
 		Window.clear(sf::Color::Red);
 
-		//renderGame Objects
-		//here we call the objects
 		Draw();
+
 		Window.display();
 	}
 	return 0;
 }
-
-*/
