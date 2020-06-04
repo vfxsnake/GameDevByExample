@@ -19,11 +19,12 @@ private:
 	sf::Texture m_Texture;
 	sf::Sprite m_Sprite;
 	sf::Vector2f m_Position;
-
-	int Jumpcount = 0;
-	float m_Mass;
-	float m_Velocity;
+public:
+	int JumpCount = 0;
+	float m_Mass = 200;
+	float m_Velocity = 0;
 	const float m_Gravity = 9.8f;
-	bool m_Grounded;
+	bool m_Grounded = false;
 };
+
 
