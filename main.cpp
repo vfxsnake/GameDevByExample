@@ -1,6 +1,8 @@
 // Include headers:
 #include "SFML/Graphics.hpp"
 #include "Hero.h"
+#include "Enemy.h"
+#include <vector>
 #include <iostream>
 
 // Static Variables
@@ -8,17 +10,22 @@ sf::Vector2f ViewSize(1024,768);
 sf::VideoMode Vm(ViewSize.x, ViewSize.y);
 sf::RenderWindow Window(Vm, "Hello SFML  Game!!!", sf::Style::Default);
 
-sf::Vector2f PlayerPosition;
-bool PlayerMoving = false;
-
+// Level creation
 sf::Texture SkyTexture;
 sf::Sprite SkySprite;
 
 sf::Texture BgTexture;
 sf::Sprite BgSprite;
 
+// fucntion prototypes
+void SpawnEnemy();
+
 // Hero class instace
 Hero HeroGirl;
+
+// Enemy class  multiple instances instaces
+std::vector<Enemy*> Enemies;
+
 
 void Init()
 {
@@ -31,6 +38,9 @@ void Init()
 	// init HeroGirl texture, position , mass
 	HeroGirl.Init("Assets/graphics/hero.png", sf::Vector2f(ViewSize.x *0.25f,ViewSize.y * 0.5f),
 					200);
+
+	// set ramdom seed
+	srand((int)time(0));
 
 }
 
@@ -82,6 +92,39 @@ void Draw()
 	Window.draw(SkySprite);
 	Window.draw(BgSprite);
 	Window.draw(HeroGirl.GetSprite());
+}
+
+void SpawnEnemy()
+{
+	int randLoc = rand() % 3;
+	sf::Vector2f EnemyPos;
+	float Speed;
+
+	switch (randLoc)
+	{
+	case 0:
+		EnemyPos = sf::Vector2f(ViewSize.x, ViewSize.y * 0.75f);
+		Speed = -400; 
+		break;
+	
+	case 1:
+		EnemyPos = sf::Vector2f(ViewSize.x, ViewSize.y * 0.60f);
+		Speed = -550; 
+		break;
+	case 2:
+		EnemyPos = sf::Vector2f(ViewSize.x, ViewSize.y * 0.40f);
+		Speed = -650; 
+		break;
+
+	default:
+		printf("incorrect values \n");
+		return;
+	}
+
+	Enemy* EnemySpawn = new Enemy();
+	EnemySpawn->Init("Assets/graphics/enemy.png", EnemyPos, Speed);
+	Enemies.push_back(EnemySpawn);
+	// Chapter 4 p.133 section 6 
 }
 
 int main()
