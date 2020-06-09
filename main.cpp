@@ -2,6 +2,8 @@
 #include "SFML/Graphics.hpp"
 #include "Hero.h"
 #include "Enemy.h"
+#include "Rocket.h"
+
 #include <vector>
 #include <iostream>
 
@@ -19,6 +21,7 @@ sf::Sprite BgSprite;
 
 // fucntion prototypes
 void SpawnEnemy();
+void Shoot();
 
 // Hero class instace
 Hero HeroGirl;
@@ -26,6 +29,11 @@ Hero HeroGirl;
 // Enemy class  multiple instances instaces
 std::vector<Enemy*> Enemies;
 
+// rocket multiple instances
+std::vector<Rocket*> Rockets;
+
+float CurrentTime;
+float PrevTime = 0.0f;
 
 void Init()
 {
@@ -62,6 +70,12 @@ void UpdateInput()
 			{
 				HeroGirl.Jump(750.0f);
 			}
+
+			if (Event.key.code == sf::Keyboard::Space)
+			{
+				Shoot();
+			}
+
 		}
 		// key released event
 		if (Event.type == sf::Event::KeyReleased)
@@ -72,6 +86,8 @@ void UpdateInput()
 				PlayerMoving = false;
 			}*/
 		}
+
+
 
 		// handle the exit of the game closing the window.
 		if (Event.key.code == sf::Keyboard::Escape || Event.type == sf::Event::Closed)
@@ -84,6 +100,39 @@ void UpdateInput()
 void Update(float Dt)
 {
 	HeroGirl.Update(Dt);
+	CurrentTime += Dt;
+	//Spawn Enemies
+	if (CurrentTime >= PrevTime + 1.125f)
+	{
+		SpawnEnemy();
+		PrevTime = CurrentTime;
+	}
+
+	// updating Enemies
+	for (int i = 0; i < Enemies.size(); i++)
+	{
+		Enemy* CurrentEnemy = Enemies[i];
+		CurrentEnemy->Update(Dt);
+		if (CurrentEnemy->GetSprite().getPosition().x < 0)
+		{
+			Enemies.erase(Enemies.begin() + i);
+			delete(CurrentEnemy);
+		}
+	}
+
+	// updating Rockets:
+	for (int i = 0; i < Rockets.size(); i++)
+	{
+		Rocket* rocket = Rockets[i];
+		rocket->Update(Dt);
+
+		if (rocket->GetSprite().getPosition().x > ViewSize.x)
+		{
+			Rockets.erase(Rockets.begin()+i);
+			printf("Deliting Roket");
+			delete(rocket);
+		}
+	}
 }
 
 
@@ -92,6 +141,19 @@ void Draw()
 	Window.draw(SkySprite);
 	Window.draw(BgSprite);
 	Window.draw(HeroGirl.GetSprite());
+
+	// drawing enemies:
+	for (Enemy* enemy : Enemies) // for loop vector iter form
+	{
+		Window.draw(enemy->GetSprite());
+	}
+
+	// Drawing Rockets:
+	for (Rocket* rocket : Rockets)
+	{
+		Window.draw(rocket->GetSprite());
+	}
+
 }
 
 void SpawnEnemy()
@@ -125,6 +187,13 @@ void SpawnEnemy()
 	EnemySpawn->Init("Assets/graphics/enemy.png", EnemyPos, Speed);
 	Enemies.push_back(EnemySpawn);
 	// Chapter 4 p.133 section 6 
+}
+
+void Shoot()
+{
+	Rocket* rocket = new Rocket();
+	rocket->Init("Assets/graphics/rocket.png", HeroGirl.GetSprite().getPosition(), 400.0f);
+	Rockets.push_back(rocket);
 }
 
 int main()

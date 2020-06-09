@@ -22,12 +22,14 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Rocket.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Rocket.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameDevByExample.rc" />
