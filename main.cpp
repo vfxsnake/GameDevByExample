@@ -23,6 +23,9 @@ sf::Sprite BgSprite;
 void SpawnEnemy();
 void Shoot();
 
+//check collision:
+bool CheckCollision(sf::Sprite Sprite1, sf::Sprite Sprite2);
+
 // Hero class instace
 Hero HeroGirl;
 
@@ -133,7 +136,27 @@ void Update(float Dt)
 			delete(rocket);
 		}
 	}
+
+	// check rocket collisiont with enemys:
+	for (int i = 0; i < Rockets.size(); i++)
+	{
+		for (int j = 0; j < Enemies.size(); j++)
+		{
+			Rocket* rocket = Rockets[i];
+			Enemy* enemy = Enemies[j];
+
+			if (CheckCollision(rocket->GetSprite(), enemy->GetSprite()))
+			{
+				Rockets.erase(Rockets.begin() + i);
+				Enemies.erase(Enemies.begin() + j);
+				delete(rocket);
+				delete(enemy);
+				printf("roket, enemy intersection");
+			}
+		}
+	}
 }
+// chapter 5 p.144 Finalizing your game
 
 
 void Draw()
@@ -194,6 +217,21 @@ void Shoot()
 	Rocket* rocket = new Rocket();
 	rocket->Init("Assets/graphics/rocket.png", HeroGirl.GetSprite().getPosition(), 400.0f);
 	Rockets.push_back(rocket);
+}
+
+bool CheckCollision(sf::Sprite Sprite1, sf::Sprite Sprite2)
+{
+	sf::FloatRect Shape1 = Sprite1.getGlobalBounds();
+	sf::FloatRect Shape2 = Sprite2.getGlobalBounds();
+	if (Shape1.intersects(Shape2))
+	{
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
 }
 
 int main()
