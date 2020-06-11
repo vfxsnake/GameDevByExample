@@ -22,6 +22,7 @@ sf::Sprite BgSprite;
 // fucntion prototypes
 void SpawnEnemy();
 void Shoot();
+void Reset();
 
 //check collision:
 bool CheckCollision(sf::Sprite Sprite1, sf::Sprite Sprite2);
@@ -38,6 +39,16 @@ std::vector<Rocket*> Rockets;
 float CurrentTime;
 float PrevTime = 0.0f;
 
+// score variable
+int Score = 0;
+// game over variable
+bool GameOver = true;
+
+// create text
+sf::Font HeadingFont;
+sf::Text HeadingText;
+
+
 void Init()
 {
 	SkyTexture.loadFromFile("Assets/graphics/sky.png"); // loads the texture
@@ -46,8 +57,21 @@ void Init()
 	BgTexture.loadFromFile("Assets/graphics/bg.png");
 	BgSprite.setTexture(BgTexture);
 
+	//load Font
+	HeadingFont.loadFromFile("Assets/fonts/SnackerComic.ttf");
+	HeadingText.setFont(HeadingFont);
+	HeadingText.setString("Tiny Bazooka");
+	HeadingText.setCharacterSize(84);
+	HeadingText.setFillColor(sf::Color::Red);
+
+	sf::FloatRect HeadingBounds = HeadingText.getLocalBounds();
+	HeadingText.setOrigin(HeadingBounds.width / 2, HeadingBounds.height / 2);
+	HeadingText.setPosition(sf::Vector2f(ViewSize.x / 2, ViewSize.y / 2));
+	
+	// Chapter 5 p150 index 7 to do add score to window .*************************
+
 	// init HeroGirl texture, position , mass
-	HeroGirl.Init("Assets/graphics/hero.png", sf::Vector2f(ViewSize.x *0.25f,ViewSize.y * 0.5f),
+	HeroGirl.Init("Assets/graphics/hero.png", sf::Vector2f(ViewSize.x *0.25f,ViewSize.y * 0.1f),
 					200);
 
 	// set ramdom seed
@@ -63,11 +87,7 @@ void UpdateInput()
 		// key press event:
 		if (Event.type == sf::Event::KeyPressed)
 		{
-			/*
-			if (Event.key.code == sf::Keyboard::Right)
-			{
-				PlayerMoving = true;
-			}*/
+
 
 			if (Event.key.code == sf::Keyboard::Up)
 			{
@@ -76,6 +96,11 @@ void UpdateInput()
 
 			if (Event.key.code == sf::Keyboard::Space)
 			{
+				if (GameOver)
+				{
+					GameOver = false;
+					Reset();
+				}
 				Shoot();
 			}
 
@@ -120,6 +145,7 @@ void Update(float Dt)
 		{
 			Enemies.erase(Enemies.begin() + i);
 			delete(CurrentEnemy);
+			GameOver = true;
 		}
 	}
 
@@ -147,6 +173,9 @@ void Update(float Dt)
 
 			if (CheckCollision(rocket->GetSprite(), enemy->GetSprite()))
 			{
+				Score++;
+				printf("score is : %i \n", Score);
+			
 				Rockets.erase(Rockets.begin() + i);
 				Enemies.erase(Enemies.begin() + j);
 				delete(rocket);
@@ -156,14 +185,37 @@ void Update(float Dt)
 		}
 	}
 }
-// chapter 5 p.144 Finalizing your game
 
+void Reset()
+{
+	Score = 0;
+	CurrentTime = 0.0f;
+	PrevTime = 0.0f;
+	for (Enemy* enemy : Enemies)
+	{
+		delete(enemy); // clear memory from enemies
+	}
+
+	for (Rocket* rocket : Rockets)
+	{
+		delete(rocket); // clear memory from rockets
+	}
+
+	Enemies.clear(); // cleaan Enemies vector
+	Rockets.clear(); // clean Rockets vector
+	printf("reset Done \n");
+}
 
 void Draw()
 {
 	Window.draw(SkySprite);
 	Window.draw(BgSprite);
 	Window.draw(HeroGirl.GetSprite());
+
+	if (GameOver)
+	{
+		Window.draw(HeadingText);
+	}
 
 	// drawing enemies:
 	for (Enemy* enemy : Enemies) // for loop vector iter form
@@ -245,10 +297,12 @@ int main()
 		UpdateInput();
 
 		sf::Time Dt = Clock.restart();
-		Update(Dt.asSeconds());
+		if (!GameOver)
+		{
+			Update(Dt.asSeconds());
+		}
 		
 		Window.clear(sf::Color::Red);
-
 		Draw();
 
 		Window.display();
