@@ -48,6 +48,10 @@ bool GameOver = true;
 sf::Font HeadingFont;
 sf::Text HeadingText;
 
+//create Score
+sf::Font ScoreFont;
+sf::Text ScoreText;
+
 
 void Init()
 {
@@ -57,8 +61,8 @@ void Init()
 	BgTexture.loadFromFile("Assets/graphics/bg.png");
 	BgSprite.setTexture(BgTexture);
 
-	//load Font
-	HeadingFont.loadFromFile("Assets/fonts/SnackerComic.ttf");
+	//load title Font
+	HeadingFont.loadFromFile("Assets/fonts/arial.ttf");
 	HeadingText.setFont(HeadingFont);
 	HeadingText.setString("Tiny Bazooka");
 	HeadingText.setCharacterSize(84);
@@ -66,9 +70,18 @@ void Init()
 
 	sf::FloatRect HeadingBounds = HeadingText.getLocalBounds();
 	HeadingText.setOrigin(HeadingBounds.width / 2, HeadingBounds.height / 2);
-	HeadingText.setPosition(sf::Vector2f(ViewSize.x / 2, ViewSize.y / 2));
+	HeadingText.setPosition(sf::Vector2f(ViewSize.x / 2, ViewSize.y * 0.1));
 	
-	// Chapter 5 p150 index 7 to do add score to window .*************************
+	// load Score font:
+	ScoreFont.loadFromFile("Assets/fonts/arial.ttf");
+	ScoreText.setFont(ScoreFont);
+	ScoreText.setString("Score: 0");
+	ScoreText.setCharacterSize(45);
+	ScoreText.setFillColor(sf::Color::Red);
+
+	sf::FloatRect ScoreBounds = ScoreText.getLocalBounds();
+	ScoreText.setOrigin(ScoreBounds.width / 2, ScoreBounds.height / 2);
+	ScoreText.setPosition(sf::Vector2f(ViewSize.x * 0.5, ViewSize.y * 0.2f));
 
 	// init HeroGirl texture, position , mass
 	HeroGirl.Init("Assets/graphics/hero.png", sf::Vector2f(ViewSize.x *0.25f,ViewSize.y * 0.1f),
@@ -173,17 +186,20 @@ void Update(float Dt)
 
 			if (CheckCollision(rocket->GetSprite(), enemy->GetSprite()))
 			{
+				// score update
 				Score++;
-				printf("score is : %i \n", Score);
-			
 				Rockets.erase(Rockets.begin() + i);
 				Enemies.erase(Enemies.begin() + j);
 				delete(rocket);
 				delete(enemy);
 				printf("roket, enemy intersection");
+			
 			}
 		}
 	}
+	std::string finalscore = "score: " + std::to_string(Score);
+	ScoreText.setString(finalscore);
+	// update score
 }
 
 void Reset()
@@ -191,6 +207,7 @@ void Reset()
 	Score = 0;
 	CurrentTime = 0.0f;
 	PrevTime = 0.0f;
+	ScoreText.setString("Score: 0");
 	for (Enemy* enemy : Enemies)
 	{
 		delete(enemy); // clear memory from enemies
@@ -203,6 +220,7 @@ void Reset()
 
 	Enemies.clear(); // cleaan Enemies vector
 	Rockets.clear(); // clean Rockets vector
+
 	printf("reset Done \n");
 }
 
@@ -215,6 +233,11 @@ void Draw()
 	if (GameOver)
 	{
 		Window.draw(HeadingText);
+	
+	}
+	else
+	{	
+		Window.draw(ScoreText);
 	}
 
 	// drawing enemies:
