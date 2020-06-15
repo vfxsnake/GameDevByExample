@@ -1,5 +1,6 @@
 // Include headers:
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
 #include "Hero.h"
 #include "Enemy.h"
 #include "Rocket.h"
@@ -18,6 +19,15 @@ sf::Sprite SkySprite;
 
 sf::Texture BgTexture;
 sf::Sprite BgSprite;
+
+//Audio instances
+sf::Music BgMusic;
+sf::SoundBuffer FireBuffer;
+sf::SoundBuffer HitBuffer;
+//sound instances
+sf::Sound FireSound(FireBuffer);
+sf::Sound HitSound(HitBuffer);
+
 
 // fucntion prototypes
 void SpawnEnemy();
@@ -52,6 +62,9 @@ sf::Text HeadingText;
 sf::Font ScoreFont;
 sf::Text ScoreText;
 
+// Instructions
+sf::Text InstructionText;
+
 
 void Init()
 {
@@ -71,7 +84,27 @@ void Init()
 	sf::FloatRect HeadingBounds = HeadingText.getLocalBounds();
 	HeadingText.setOrigin(HeadingBounds.width / 2, HeadingBounds.height / 2);
 	HeadingText.setPosition(sf::Vector2f(ViewSize.x / 2, ViewSize.y * 0.1));
+
+	// load instructions:
+	InstructionText.setFont(ScoreFont);
+	InstructionText.setString("Press space bar to frie and Strat Game, Press Up arrow to jump");
+	InstructionText.setCharacterSize(35);
+	InstructionText.setFillColor(sf::Color::Red);
+
+	sf::FloatRect InstruccionBounds = InstructionText.getLocalBounds();
+	InstructionText.setOrigin(InstruccionBounds.width / 2, InstruccionBounds.height / 2);
+	InstructionText.setPosition(sf::Vector2f(ViewSize.x * 0.01, ViewSize.y * 0.2f));
+
+	// Load Audio
+	BgMusic.openFromFile("Assets/audio/bgMusic.ogg");
+	BgMusic.setLoop(true);
+	BgMusic.play();
+
 	
+	// audio buffers:
+	FireBuffer.loadFromFile("Assets/audio/fire.ogg");
+	HitBuffer.loadFromFile("Assets/audio/hit.ogg");
+
 	// load Score font:
 	ScoreFont.loadFromFile("Assets/fonts/arial.ttf");
 	ScoreText.setFont(ScoreFont);
@@ -84,8 +117,8 @@ void Init()
 	ScoreText.setPosition(sf::Vector2f(ViewSize.x * 0.5, ViewSize.y * 0.2f));
 
 	// init HeroGirl texture, position , mass
-	HeroGirl.Init("Assets/graphics/hero.png", sf::Vector2f(ViewSize.x *0.25f,ViewSize.y * 0.1f),
-					200);
+	HeroGirl.Init("Assets/graphics/heroAnim.png", 4, 1.0f, 
+					sf::Vector2f(ViewSize.x *0.25f,ViewSize.y * 0.1f),200);
 
 	// set ramdom seed
 	srand((int)time(0));
@@ -187,6 +220,7 @@ void Update(float Dt)
 			if (CheckCollision(rocket->GetSprite(), enemy->GetSprite()))
 			{
 				// score update
+				HitSound.play();
 				Score++;
 				Rockets.erase(Rockets.begin() + i);
 				Enemies.erase(Enemies.begin() + j);
@@ -233,7 +267,7 @@ void Draw()
 	if (GameOver)
 	{
 		Window.draw(HeadingText);
-	
+		Window.draw(InstructionText);
 	}
 	else
 	{	
@@ -292,6 +326,7 @@ void Shoot()
 	Rocket* rocket = new Rocket();
 	rocket->Init("Assets/graphics/rocket.png", HeroGirl.GetSprite().getPosition(), 400.0f);
 	Rockets.push_back(rocket);
+	FireSound.play();
 }
 
 bool CheckCollision(sf::Sprite Sprite1, sf::Sprite Sprite2)
@@ -327,7 +362,7 @@ int main()
 		
 		Window.clear(sf::Color::Red);
 		Draw();
-
+		
 		Window.display();
 	}
 	return 0;
